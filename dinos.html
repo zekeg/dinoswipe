@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+
+
+<html>
+
+  <head>
+  <style>
+    #root {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr)
+    }
+
+  </style>
+  </head>
+
+  <body>
+
+  <div id="root"></div>
+
+  <script>
+    //START HERE
+
+    //GET THE VIEW SIZE
+
+    //this is the dinosaur state object which will hold all the dinosaur img tags and t
+    let o = {}
+    //here's an "easy" way to get a random dinosaur
+    //currently I had to set the number arbitrarily to 29 because there's no way to search for how many img files are in the folder
+    //I plan on making more images so this will need to adapt to the new ones
+    let r = function(){return Math.floor(Math.random()*29+1)}
+    //resetDino does not change the id or anything other than the src
+    //resetDino will give a random number based on the number of available images
+        //IN THE FUTURE I WANT TO CREATE LITTLE GATES TO CHANGE DINO PROBABILITY.
+    resetDino = (event) => {
+      event.target.setAttribute("src", "./images/dino (" + r() +").png");
+      //update object with new dinosaur (this is very mess I know)
+      o[event.target.id]=event.target.src;
+    }
+
+
+    //we create a paragraph element node that is empty to be added to the DOM document node
+    //btw everything is a node inside the DOM
+    //note that everything is passed to the DOM framework in a string,
+    //ie, it reads the method createElement() for an argument and that argument is a string type
+
+
+    makeImgElement = (key) => {
+      const x = document.createElement("img")
+      x.setAttribute("src", "./images/dino (" + r() +").png");
+      x.setAttribute("onmouseover", "resetDino(event)")
+      x.setAttribute("id", key)
+
+      o[key]=x["src"];
+      return x;
+    }
+
+
+    adjustWindow = () => {
+      str="grid-template-columns";
+      return console.log(document.getElementById("root").style[str])
+    }
+
+
+    constructDinosaurs = function(amount){
+        for(let x = 0; x<amount; x++){
+              //the index of x creates a key value for the constructed node's id
+              document.getElementById("root").appendChild(makeImgElement(x))
+        }
+    }
+
+// width = 100px chunks are detected
+    getDinoAmount = () => {return(Math.floor((window.innerWidth)/100 * (window.innerHeight)/100))};
+
+
+    console.log(getDinoAmount())
+//We construct some amount of dinosaurs that will fit in the window
+    constructDinosaurs(getDinoAmount());
+    adjustWindow();
+  </script>
+
+
+  </body>
+
+</html>
