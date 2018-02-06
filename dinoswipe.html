@@ -1,0 +1,210 @@
+<!doctype html>
+
+<html>
+
+<head>
+    <style>
+        #ui {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #dino-target {
+            margin: 50px;
+            height: 200px;
+            width: 200px;
+            border-style: hidden;
+        }
+
+        #round-indicator{
+
+        }
+
+        #current-score {
+            margin: 100px;
+        }
+
+        #root{
+
+
+        }
+    </style>
+</head>
+
+<body>
+    <div id="ui">
+        <div id="seconds"></div>
+        <div id="rounds-container"><div id="round-indicator">CURRENT ROUND:</div><div id="rounds"></div></div>
+        <img id="dino-target"></img>
+        <div id="current-score"></div>
+
+        <button onClick="startGame()">START/RESET</button>
+    </div>
+    <div id="root"></div>
+</body>
+<script>
+    //This program in a nutshell:
+    //The object "o" contains all the information for the game, an array of all
+    //the tiles and then information about the score and current objective target/game rules
+    //*************************
+    //The program does the folowing:
+    //game runs through startGame() via the user clicking Start/Reset
+    //a new round starts and then if the player moves over a tile score is recalculated
+
+
+    //All sounds
+    var click = new Audio("./sounds/click.mp3");
+    var hit = new Audio("./sounds/hit.mp3");
+    var round = new Audio("./sounds/round.mp3");
+
+
+
+    //Game data object
+    const o = {
+        tile: [],
+        imageAmount: 29,
+        score: 0,
+        playerTarget: "./dinos/dino (1).png",
+        cummulativeScore: 0,
+        rounds: 0,
+        maxRounds: 5,
+        seconds: 20,
+        screensize: []
+    }
+
+
+    //Attempts at getting the game to be adaptable include calculating window ize then gnerating an appropriate amount of dinosaurs
+    const getWindowSize = () => {
+      console.log(window.innerWidth + "  " + window.innerHeight)
+      return [window.innerWidth, window.innerHeight]
+    }
+
+
+
+    const timerRun = () => {
+        clearTimeout(o.timerEngaged)
+        //play sound
+        round.play()
+        console.log("running timer")
+        o.timerEngaged = setTimeout(accumulateScore, 10000)
+    }
+
+    const displayRound = () => {
+      document.getElementById("rounds").innerHTML = o.rounds
+    }
+
+
+    //***
+    //I think most current improvements would be done by reorganizing things around this event a little tighter.
+    //What's happening here? We are basically moving one "increment" (in this case a swipe) in time.
+    const accumulateScore = () => {
+        o.screensize = getWindowSize()
+        o.playerTarget = randomImage()
+        document.getElementById("dino-target").setAttribute("src", o.playerTarget)
+        o.cummulativeScore += o.score
+        o.rounds++;
+        displayRound()
+        o.rounds < o.maxRounds ? timerRun() : document.getElementById("current-score").innerHTML = ("TOTAL SCORE: " + o.cummulativeScore)
+    }
+
+
+    const generateElement = (type, id) => {
+        const x = document.createElement(type)
+        x.setAttribute("id", id)
+        document.getElementById("root").appendChild(x)
+    }
+
+    const randomImage = () => "./dinos/dino (" + Math.floor(Math.random() * o.imageAmount + 1) + ").png"
+
+    const createTileObject = (tileOrder) => {
+        return {
+            id: tileOrder,
+            url: randomImage()
+        }
+    }
+
+    //***
+    const generateTileElements = (amount) => {
+        //creates an html img element with an id paired to the object
+        //((window.innerWidth * window.innerHeight)/100)
+
+        for (x = 0; x < amount; x++) {
+            o.tile[x] = createTileObject(x)
+                //If there is not an image tag by this id then make one
+            if (document.getElementById(x) == null) {
+                generateElement("img", x)
+            }
+            //Then give it the following attributes
+            document.getElementById(x).setAttribute("src", o.tile[x].url)
+            document.getElementById(x).setAttribute("onmouseover", "updateTile(this)")
+        }
+    }
+
+    const compareTarget = (obj) => {
+        return obj.url == o.playerTarget
+    }
+
+
+//***
+    const calcScore = () => {
+        o.score = o.tile.filter(compareTarget).length
+    }
+
+    const validateStart = () => {
+        return Boolean(o.rounds > 0 && o.rounds < o.maxRounds)
+    }
+
+    const soundEngine = (score) => {
+        if (o.score > score) {
+            hit.currentTime = 0
+            hit.play()
+        } else {
+            click.currentTime = 0
+            click.play()
+        }
+    }
+
+//*** ROLLOVER IMAGE EVENT TRIGGER
+    const updateTile = (target) => {
+        //Is this tile in the document active?
+        if (validateStart()) {
+            //Rolling over a tile in the active state will ALWAYS change it
+
+            //***store the original score value
+            const score = o.score;
+
+            //log the action of creating a new image/updating the object to the console
+            console.log(target.setAttribute("src", randomImage()))
+            console.log(o.tile[target.getAttribute("id")].url = target.getAttribute("src"))
+                //Update the score
+            calcScore()
+            document.getElementById("current-score").innerHTML = "CURRENT SCORE " + o.score
+            soundEngine(score)
+        }
+
+    }
+
+    const resetGame = () => {
+        clearTimeout(o.timerEngaged)
+        o.tile = []
+        o.rounds = 0
+        o.cummulativeScore = 0
+        o.score = 0
+    }
+
+//*** START/RESET BUTTON EVENT TRIGGER
+    const startGame = () => {
+            resetGame()
+            generateTileElements(40)
+            accumulateScore()
+        }
+        //based on windows size generate some number of elements measured 100px
+
+
+    //check element = (calculated change) =>
+    //
+</script>
+
+</html>

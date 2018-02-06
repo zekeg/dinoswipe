@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html>
+<style>
+  #root{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+  }
+</style>
+<body>
+    <div id="root"></div>
+
+    <div id="options">
+    <button id="generate-div-button" class="button" type="button" onclick="onGenerateButtonClick()">generate div</button>
+    <select id="pixels">
+      <option data-pixels="100px">100px</option>
+      <option data-pixels="400px">400px</option>
+      <option data-pixels="1000px">1000px</option>
+    </select>
+
+    <select id="color">
+      <option data-color="#FBCD32">FBCD32 (yellowy)</option>
+      <option data-color="#3F73E9">3F73E9 (bluish)</option>
+      <option data-color="#C4DD45">C4DD45 (greenish)</option>
+    </select>
+
+  </div>
+</body>
+
+<script>
+    const toggle = (callback) => {
+    }
+
+    const getPixels = () => {
+        //it just gets the div data for pixels
+        return document.getElementById("pixels").children[document.getElementById("pixels").selectedIndex].dataset.pixels
+    }
+
+    const getColor = () => {
+      return document.getElementById("color").children[document.getElementById("color").selectedIndex].dataset.color
+    }
+
+    //let the first child be what I assume is element 0 so that we may identify our elements at a later time
+    const genDiv = () => {
+        console.log("gennin the div");
+
+        const x = document.createElement("div");
+        x.setAttribute("class", "generated-div");
+        //an ID is assigned based on the childElementCount
+        x.setAttribute("id", document.getElementById("root").childElementCount)
+        const y = document.getElementById("root").appendChild(x);
+
+        console.log("I generated: ")
+        console.log(y)
+        return y
+    }
+
+    const onGenerateButtonClick = () => {
+        console.log("clicked");
+        const x = genDiv();
+        console.log(getPixels())
+        x.style.height = getPixels()
+        x.style.width = getPixels()
+        x.style.backgroundColor= getColor()
+    }
+
+</script>
+
+
+</html>

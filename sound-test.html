@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+</style>
+</head>
+<body>
+
+  <button onclick="playSound(this)" data="click">play sound (but its click)</button>
+  <button onclick="playSound(this)" data="click">Play Click Sound</button>
+  <button onclick="playSound(this)" data="hit">Play Hit Sound</button>
+  <button onclick="playSound(this)" data="round">Play Round Sound</button>
+
+
+  <div id="root"></div>
+
+
+  <audio id="click" src="./sounds/click.mp3"></audio>
+  <audio id="hit" src="./sounds/hit.mp3"></audio>
+  <audio id="round" src="./sounds/round.mp3"></audio>
+</body>
+
+<script>
+  const createElement = (type, id) => {
+    const x = document.createElement(type)
+    x.setAttribute("id", id)
+  }
+
+  const playSound = (e) => {
+    console.log(document.getElementById(e.getAttribute("data")))
+    const audio = document.getElementById(e.getAttribute("data"))
+    audio.currentTime = 0
+    audio.play()
+  }
+
+</script>
+</html>
